@@ -1,0 +1,8 @@
+<%= content_tag :li, id: todo.id, class: (todo.completed ? "completed" : nil),
+  data: { title: todo.title, completed: todo.completed? } do %>
+  <div class="view">
+    <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>
+    <%= label_tag :title, todo.title, data: { behavior: "edit" } %>
+    <%= button_tag "", type: "button", class: "destroy", data: { behavior: "destroy" } %>
+  </div>
+<% end %>

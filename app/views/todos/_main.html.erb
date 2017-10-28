@@ -1,0 +1,7 @@
+<%= content_tag :section, class: "main #{@todos.empty? ? "hidden" : nil}" do %>
+  <input id="toggle-all" class="toggle-all" type="checkbox" data-behavior="toggle-all">
+  <label for="toggle-all">Mark all as complete</label>
+  <ul class="todo-list">
+    <%= render partial: "/todos/todo", collection: @todos %>
+  </ul>
+<% end %>

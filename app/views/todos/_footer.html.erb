@@ -1,0 +1,11 @@
+<%= content_tag :section, class: "footer #{Todo.all.empty? ? "hidden" : nil}" do %>
+  <%= render partial: "/todos/count", locals: { count: incompleted(@todos).size } %>
+
+  <ul class="filters">
+    <li><%= link_to "All",       "#", class: "filter #{(@filter == "all" ? "selected" : nil)}", data: { behavior: "show-all" } %></li>
+    <li><%= link_to "Active",    "#", class: "filter #{(@filter == "incomplete" ? "selected" : nil)}", data: { behavior: "show-incomplete" } %></li>
+    <li><%= link_to "Completed", "#", class: "filter #{(@filter == "completed" ? "selected" : nil)}", data: { behavior: "show-completed" } %></li>
+  </ul>
+
+  <%= button_tag "Clear completed", class: "clear-completed #{ completed(@todos).empty? ? "hidden" : nil}", data: { behavior: "destroy-completed" } %>
+<% end %>
