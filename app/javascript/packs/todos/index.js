@@ -1,2 +1,91 @@
+//jshint esnext:true
 import 'todomvc-common/base.css';
 import 'todomvc-app-css/index.css';
+
+CableReady.debug = true;
+
+const ENTER_KEY = 13;
+const ESCAPE_KEY = 27;
+
+function findListItem(element) {
+  if (element === document.body) return {};
+  if (element.tagName === 'LI') return element;
+  return findListItem(element.parentElement);
+}
+
+function send(action, params) {
+  if (!Array.isArray(params)) params = [params];
+  App.todo.send({ [action]: params });
+}
+
+document.addEventListener('keydown', event => {
+  const { target, keyCode } = event;
+  const { behavior } = target.dataset;
+  const { id, completed } = findListItem(target);
+
+  switch(keyCode) {
+    case ENTER_KEY:
+      switch(behavior) {
+        case 'create':
+          return send(behavior, { title: target.value });
+        case 'update':
+          return send(behavior, { id, completed, title: target.value });
+      }
+      break;
+    case ESCAPE_KEY:
+      if ('update') return send('show', { id });
+      break;
+  }
+});
+
+document.addEventListener('dblclick', event => {
+  const { target } = event;
+  const { behavior } = target.dataset;
+  const { id } = findListItem(event.target);
+  if (behavior == 'edit') return send(behavior, { id });
+});
+
+document.addEventListener('click', event => {
+  const { target } = event;
+  const { behavior } = target.dataset;
+  const li = findListItem(target);
+  const filter = document.querySelector('.filter.selected').innerText;
+
+  switch(behavior) {
+    case 'toggle-all':
+      event.preventDefault();
+      const updates = document.getElementsByTagName('li').reduce((memo, li) => {
+        let { id, title, completed } = li.dataset;
+        completed = (completed === 'true' ? false : true);
+        if (title) memo.push({id, title, completed, filter});
+      }, []);
+      return send('update', updates);
+
+    case 'toggle':
+      event.preventDefault();
+      let { id, title, completed } = li.dataset;
+      completed = (completed === 'true' ? false : true);
+      return send('update', { id, title, completed, filter });
+
+    case 'destroy-completed':
+      event.preventDefault();
+      return send('destroy', { id: 'completed' });
+
+    case 'destroy':
+      event.preventDefault();
+      let { id } = li.dataset;
+      return send('destroy', { id });
+
+    case 'show-all':
+      event.preventDefault();
+      return send('index', { filter: 'all' });
+
+    case 'show-uncompleted':
+      event.preventDefault();
+      return send('index', { filter: 'uncompleted' });
+
+    case 'show-completed':
+      event.preventDefault();
+      return send('index', { filter: 'completed' });
+  }
+});

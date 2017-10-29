@@ -3,7 +3,7 @@ module TodosHelper
     todos.select(&:completed?)
   end
 
-  def incompleted(todos)
+  def uncompleted(todos)
     todos - completed(todos)
   end
 end
