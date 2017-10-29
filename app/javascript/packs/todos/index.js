@@ -48,14 +48,14 @@ document.addEventListener('dblclick', event => {
 document.addEventListener('click', event => {
   const { target } = event;
   const { behavior } = target.dataset;
-  const li = findListItem(target);
   const filter = document.querySelector('.filter.selected').innerText;
+  const li = findListItem(target);
+  let { id, title, completed } = li.dataset;
 
   switch(behavior) {
     case 'toggle-all':
       event.preventDefault();
       const updates = document.getElementsByTagName('li').reduce((memo, li) => {
-        let { id, title, completed } = li.dataset;
         completed = (completed === 'true' ? false : true);
         if (title) memo.push({id, title, completed, filter});
       }, []);
@@ -63,7 +63,6 @@ document.addEventListener('click', event => {
 
     case 'toggle':
       event.preventDefault();
-      let { id, title, completed } = li.dataset;
       completed = (completed === 'true' ? false : true);
       return send('update', { id, title, completed, filter });
 
@@ -73,7 +72,6 @@ document.addEventListener('click', event => {
 
     case 'destroy':
       event.preventDefault();
-      let { id } = li.dataset;
       return send('destroy', { id });
 
     case 'show-all':

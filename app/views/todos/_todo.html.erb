@@ -1,4 +1,5 @@
-<%= content_tag :li, id: todo.id, class: (todo.completed ? "completed" : nil),
+<%= content_tag :li, id: todo.id,
+  class: "#{todo.completed ? "completed" : nil} #{todo.hide?(@filter) ? "hidden" : nil}",
   data: { title: todo.title, completed: todo.completed? } do %>
   <div class="view">
     <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>

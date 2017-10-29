@@ -23,46 +23,124 @@ class TodoChannel < ApplicationCable::Channel
       cable_ready["UserChannel#{user_id}"]
     end
 
-    def count_html
-      renderer = ApplicationController.renderer.new
-      renderer.render partial: "/todos/count", locals: { count: Todo.uncompleted.size }
-    end
-
-    def clear_completed_operation
-      Todo.completed.count.zero? ? :add_css_class : :remove_css_class
-    end
-
-    def should_remove?(todo, filter)
-      remove   = filter == "Active" && todo.completed?
-      remove ||= filter == "Completed" && todo.uncompleted?
-      remove
-    end
-
     def create(params)
       todo = Todo.new(params.permit(:title))
 
       if todo.save
-        todo_html = todo.render_with(partial: "/todos/todo.html")
-        user_operations.set_value                              selector: ".new-todo",   value: ""
-        todo_operations.insert_adjacent_html                   selector: ".todo-list",  html: todo_html
-        todo_operations.remove_css_class                       selector: ".main",       name: "hidden"
-        todo_operations.remove_css_class                       selector: ".footer",     name: "hidden"
-        todo_operations.replace                                selector: ".todo-count", html: count_html
-        todo_operations.public_send clear_completed_operation, selector: ".clear-completed", name: "hidden"
+        todo_operations.insert_adjacent_html selector: ".todo-list",
+          html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
+        todo_operations.remove_css_class     selector: ".main",      name: "hidden"
+        todo_operations.remove_css_class     selector: ".footer",    name: "hidden"
+        user_operations.set_value            selector: ".new-todo",  value: ""
+        render_todo_count
+        toggle_clear_completed_button
         cable_ready.broadcast
       end
     end
 
     def update(params)
-      todo = Todo.find(params["id"])
+      todo = Todo.find(params[:id])
 
       if todo.update(params.permit(:title, :completed))
-        todo_html = todo.render_with(partial: "/todos/todo.html")
-        operation = should_remove?(todo, params[:filter]) ? :remove : :replace
-        todo_operations.public_send operation,                 selector: "##{todo.id}", html: todo_html
-        todo_operations.replace                                selector: ".todo-count", html: count_html
-        todo_operations.public_send clear_completed_operation, selector: ".clear-completed", name: "hidden"
+        todo_operations.replace selector: "##{todo.id}",
+          html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
+        render_todo_count
+        toggle_clear_completed_button
         cable_ready.broadcast
       end
+    end
+
+    def destroy(params)
+      Todo.destroy(params[:id])
+
+      if Todo.count.zero?
+        todo_operations.add_css_class selector: ".main", name: "hidden"
+        todo_operations.add_css_class selector: ".footer", name: "hidden"
+      end
+
+      render_todo_count
+      toggle_clear_completed_button
+      cable_ready.broadcast
+    end
+
+    def edit(params)
+      todo = Todo.find(params[:id])
+      user_operations.replace selector: "##{todo.id}", focus_selector: "##{todo.id} input",
+        html: todo.render_with(partial: "/todos/form.html")
+      cable_ready.broadcast
+    end
+
+    def show(params)
+      todo = Todo.find(params[:id])
+      todo_operations.replace selector: "##{todo.id}", html: todo.render_with(partial: "/todos/todo.html")
+      cable_ready.broadcast
+    end
+
+    def index(params)
+      case params[:filter]
+      when "all"
+        show_todos Todo.all
+      when "uncompleted"
+        show_todos Todo.uncompleted
+        hide_todos Todo.completed
+      when "completed"
+        show_todos Todo.completed
+        hide_todos Todo.uncompleted
+      end
+
+      binding.pry
+      user_operations.replace selector: ".footer",
+        html: renderer.render(partial: "/todos/footer.html", assigns: { todos: todos, filter: params[:filter] })
+      cable_ready.broadcast
+    end
+
+    def show_todos(todos)
+      todos.each do |todo|
+        todo_operations.remove_css_class selector: "##{todo.id}", name: "hidden"
+      end
+    end
+
+    def hide_todos(todos)
+      todos.each do |todo|
+        todo_operations.add_css_class selector: "##{todo.id}", name: "hidden"
+      end
+    end
+
+    def show_clear_completed_button
+      todo_operations.remove_css_class selector: ".clear-completed", name: "hidden"
+    end
+
+    def hide_clear_completed_button
+      todo_operations.add_css_class selector: ".clear-completed", name: "hidden"
+    end
+
+    def toggle_clear_completed_button
+      if Todo.completed.count.zero?
+        hide_clear_completed_button
+      else
+        show_clear_completed_button
+      end
+    end
+
+    def show_footer
+      todo_operations.remove_css_class selector: ".footer", name: "hidden"
+    end
+
+    def hide_footer
+      todo_operations.remove_css_class selector: ".footer", name: "hidden"
+    end
+
+    def toggle_footer
+      if Todo.count.zero?
+        hide_footer
+      else
+        show_footer
+      end
+    end
+
+    def render_todo_count
+      renderer = ApplicationController.renderer.new
+      todo_operations.replace selector: ".todo-count",
+        html: renderer.render(partial: "/todos/count", locals: { count: Todo.uncompleted.size })
     end
 end
