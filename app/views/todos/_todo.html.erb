@@ -1,6 +1,6 @@
-<%= content_tag :li, id: todo.id,
+<%= content_tag :li, id: todo.to_gid_param,
   class: "#{todo.completed ? "completed" : nil} #{todo.hide?(@filter) ? "hidden" : nil}",
-  data: { title: todo.title, completed: todo.completed? } do %>
+  data: { id: todo.id, title: todo.title, completed: todo.completed? } do %>
   <div class="view">
     <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>
     <%= label_tag :title, todo.title, data: { behavior: "edit" } %>
