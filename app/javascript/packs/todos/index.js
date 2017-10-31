@@ -1,4 +1,3 @@
-//jshint esnext:true
 import 'todomvc-common/base.css';
 import 'todomvc-app-css/index.css';
 
@@ -50,7 +49,7 @@ document.addEventListener('click', event => {
   const { behavior } = target.dataset;
   const filter = document.querySelector('.filter.selected').innerText;
   const li = findListItem(target);
-  let { id, title, completed } = li.dataset;
+  let { id, title, completed } = li.dataset || {};
 
   switch(behavior) {
     case 'toggle-all':

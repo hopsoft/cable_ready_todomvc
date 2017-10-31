@@ -51,15 +51,19 @@ class TodoChannel < ApplicationCable::Channel
     end
 
     def destroy(params)
-      todo = Todo.find(params[:id])
-      todo.destroy
+      ids = params[:id]
+      ids = Todo.completed.pluck(:id) if params[:id] == "completed"
+
+      Todo.where(id: ids).each do |todo|
+        todo.destroy
+        todo_operations.remove selector: "##{todo.to_gid_param}"
+      end
 
       if Todo.count.zero?
         todo_operations.add_css_class selector: ".main", name: "hidden"
         todo_operations.add_css_class selector: ".footer", name: "hidden"
       end
 
-      todo_operations.remove selector: "##{todo.to_gid_param}"
       render_todo_count
       toggle_clear_completed_button
       cable_ready.broadcast
@@ -81,24 +85,23 @@ class TodoChannel < ApplicationCable::Channel
     def index(params)
       case params[:filter]
       when "all"
-        show_todos Todo.all
+        show_todos Todo.all, params
       when "uncompleted"
-        show_todos Todo.uncompleted
+        show_todos Todo.uncompleted, params
         hide_todos Todo.completed
       when "completed"
-        show_todos Todo.completed
+        show_todos Todo.completed, params
         hide_todos Todo.uncompleted
       end
 
-      user_operations.replace selector: ".footer",
-        html: renderer.render(partial: "/todos/footer.html", assigns: { todos: todos, filter: params[:filter] })
       cable_ready.broadcast
     end
 
-    def show_todos(todos)
+    def show_todos(todos, params)
       todos.each do |todo|
         todo_operations.remove_css_class selector: "##{todo.to_gid_param}", name: "hidden"
       end
+      render_footer todos, params
     end
 
     def hide_todos(todos)
@@ -137,6 +140,12 @@ class TodoChannel < ApplicationCable::Channel
       else
         show_footer
       end
+    end
+
+    def render_footer(todos, params)
+      renderer = ApplicationController.renderer.new
+      user_operations.replace selector: ".footer",
+        html: renderer.render(partial: "/todos/footer.html", assigns: { todos: todos, filter: params[:filter] })
     end
 
     def render_todo_count
