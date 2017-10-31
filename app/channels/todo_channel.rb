@@ -39,22 +39,40 @@ class TodoChannel < ApplicationCable::Channel
     end
 
     def update(params)
-      todo = Todo.find(params[:id])
+      return toggle_all(params) if params[:id] == "toggle"
 
+      todo = Todo.find(params[:id])
       if todo.update(params.permit(:title, :completed))
         todo_operations.replace selector: "##{todo.to_gid_param}",
           html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
-        render_todo_count
         toggle_clear_completed_button
         cable_ready.broadcast
       end
     end
 
-    def destroy(params)
-      ids = params[:id]
-      ids = Todo.completed.pluck(:id) if params[:id] == "completed"
+    def toggle_all(params)
+      if Todo.uncompleted.present?
+        Todo.uncompleted.each do |todo|
+          todo.update completed: true
+          todo_operations.replace selector: "##{todo.to_gid_param}",
+            html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
+        end
+      else
+        Todo.completed.each do |todo|
+          todo.update completed: false
+          todo_operations.replace selector: "##{todo.to_gid_param}",
+            html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
+        end
+      end
+      toggle_clear_completed_button
+      cable_ready.broadcast
+    end
 
-      Todo.where(id: ids).each do |todo|
+    def destroy(params)
+      if params[:id] == "completed"
+        destroy_completed
+      else
+        todo = Todo.find(params[:id])
         todo.destroy
         todo_operations.remove selector: "##{todo.to_gid_param}"
       end
@@ -67,6 +85,15 @@ class TodoChannel < ApplicationCable::Channel
       render_todo_count
       toggle_clear_completed_button
       cable_ready.broadcast
+    end
+
+    def destroy_completed
+      ids = Todo.completed.pluck(:id)
+
+      Todo.where(id: ids).each do |todo|
+        todo.destroy
+        todo_operations.remove selector: "##{todo.to_gid_param}"
+      end
     end
 
     def edit(params)

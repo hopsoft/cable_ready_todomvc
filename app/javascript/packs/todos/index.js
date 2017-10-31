@@ -57,11 +57,7 @@ document.addEventListener('click', event => {
   switch(behavior) {
     case 'toggle-all':
       event.preventDefault();
-      const updates = document.getElementsByTagName('li').reduce((memo, li) => {
-        completed = (completed === 'true' ? false : true);
-        if (title) memo.push({id, title, completed, filter});
-      }, []);
-      return send('update', updates);
+      return send('update', { id: 'toggle' });
 
     case 'toggle':
       event.preventDefault();
