@@ -1,4 +1,4 @@
-<%= content_tag :li, id: todo.id, class: "editing",
-  data: { title: todo.title, completed: todo.completed? } do %>
+<%= content_tag :li, id: todo.to_gid_param, class: "editing",
+  data: { id: todo.id, title: todo.title, completed: todo.completed? } do %>
   <%= text_field_tag :title, todo.title, autofocus: true, class: "edit", data: { behavior: "update" } %>
 <% end %>

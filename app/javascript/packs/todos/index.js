@@ -7,7 +7,7 @@ const ENTER_KEY = 13;
 const ESCAPE_KEY = 27;
 
 function findListItem(element) {
-  if (element === document.body) return {};
+  if (!element || element === document.body) return {};
   if (element.tagName === 'LI') return element;
   return findListItem(element.parentElement);
 }
@@ -20,15 +20,17 @@ function send(action, params) {
 document.addEventListener('keydown', event => {
   const { target, keyCode } = event;
   const { behavior } = target.dataset;
-  const { id, completed } = findListItem(target);
+  const filter = document.querySelector('.filter.selected').innerText;
+  const li = findListItem(target);
+  let { id, title, completed } = li.dataset || {};
 
   switch(keyCode) {
     case ENTER_KEY:
       switch(behavior) {
         case 'create':
-          return send(behavior, { title: target.value });
+          return send(behavior, { title: target.value, filter });
         case 'update':
-          return send(behavior, { id, completed, title: target.value });
+          return send(behavior, { id, completed, title: target.value, filter });
       }
       break;
     case ESCAPE_KEY:
@@ -40,7 +42,8 @@ document.addEventListener('keydown', event => {
 document.addEventListener('dblclick', event => {
   const { target } = event;
   const { behavior } = target.dataset;
-  const { id } = findListItem(event.target);
+  const li = findListItem(target);
+  let { id, title, completed } = li.dataset || {};
   if (behavior == 'edit') return send(behavior, { id });
 });
 
