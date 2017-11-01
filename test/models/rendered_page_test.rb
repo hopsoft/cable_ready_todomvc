@@ -1,15 +1,16 @@
 # == Schema Information
 #
-# Table name: todos
+# Table name: rendered_pages
 #
 #  id         :integer          not null, primary key
-#  title      :string           not null
-#  completed  :boolean          default(FALSE), not null
+#  user_id    :string           not null
+#  name       :string           not null
+#  body       :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 
 require 'test_helper'
 
-class TodoTest < ActiveSupport::TestCase
+class RenderedPageTest < ActiveSupport::TestCase
 end

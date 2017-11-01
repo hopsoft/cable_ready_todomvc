@@ -6,7 +6,7 @@ class TodoChannel < ApplicationCable::Channel
   def receive(data)
     data.each do |action, params_list|
       params_list.each do |params|
-        spa = TodosSpa.new(user_id, ActionController::Parameters.new(params))
+        spa = TodosSpa.new(self, user_id, ActionController::Parameters.new(params))
         send action, spa
         spa.broadcast
       end

@@ -1,9 +1,10 @@
 class TodosSpa
   extend Forwardable
   include CableReady::Broadcaster
-  attr_reader :user_id, :params
+  attr_reader :channel, :user_id, :params
 
-  def initialize(user_id, params={})
+  def initialize(channel, user_id, params={})
+    @channel = channel
     @user_id = user_id
     @params = params
   end
@@ -13,12 +14,26 @@ class TodosSpa
     cable_ready.broadcast
   end
 
+  def request
+    channel.connection.send :request
+  end
+
   def todo_created(todo)
+    filter = params[:filter] || "all"
+    html = TodosController.renderer.render(
+      template: "/todos/index",
+      assigns: { user_id: user_id, filter: filter, todos: Todo.send(filter) }
+    )
+    old_body = RenderedPage.find_by(user_id: user_id, name: "todos#index")&.body_fragment
+    new_body = Nokogiri::HTML(html).css("body").first
+
+    # TODO: diff the fragments & generate the cable_ready updates
+
     todo_operations.insert_adjacent_html selector: ".todo-list",
       html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })
-    todo_operations.remove_css_class     selector: ".main",      name: "hidden"
-    todo_operations.remove_css_class     selector: ".footer",    name: "hidden"
-    user_operations.set_value            selector: ".new-todo",  value: ""
+    todo_operations.remove_css_class selector: ".main",      name: "hidden"
+    todo_operations.remove_css_class selector: ".footer",    name: "hidden"
+    user_operations.set_value        selector: ".new-todo",  value: ""
   end
 
   def todo_updated(todo)
@@ -67,7 +82,7 @@ class TodosSpa
     end
 
     def render_footer
-      renderer = ApplicationController.renderer.new
+      renderer = TodosController.renderer.new
       user_operations.replace selector: ".footer",
         html: renderer.render(partial: "/todos/footer.html", assigns: { filter: params[:filter] })
     end

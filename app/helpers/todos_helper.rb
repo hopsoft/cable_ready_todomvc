@@ -1,4 +1,9 @@
 module TodosHelper
+  def todos_css(todos)
+    return "hidden" if @todos.empty?
+    nil
+  end
+
   def todo_css(todo, filter)
     css = []
     css << "completed" if todo.completed?

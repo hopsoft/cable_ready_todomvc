@@ -1,5 +1,5 @@
 <%= content_tag :section, class: "footer #{footer_css}" do %>
-  <%= render partial: "/todos/count", locals: { count: Todo.uncompleted.count } %>
+  <%= render partial: "/todos/count.html", locals: { count: Todo.uncompleted.count } %>
 
   <ul class="filters">
     <li><%= link_to "All",       "#", class: "filter #{filter_css :all, @filter}",         data: { behavior: "show-all" } %></li>
