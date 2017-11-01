@@ -36,12 +36,6 @@ class Todo < ApplicationRecord
     !completed?
   end
 
-  def hide?(filter)
-    return true if filter == "Completed" && uncompleted?
-    return true if filter == "Active" && completed?
-    false
-  end
-
   # protected instance methods ................................................
   # private instance methods ..................................................
 end

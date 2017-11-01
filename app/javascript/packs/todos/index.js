@@ -17,10 +17,17 @@ function send(action, params) {
   App.todo.send({ [action]: params });
 }
 
+function activeFilter () {
+  const element = document.querySelector('.filter.selected');
+  if (element) {
+    return element.dataset.behavior.replace(/^show-/, '');
+  }
+  return 'all';
+}
+
 document.addEventListener('keydown', event => {
   const { target, keyCode } = event;
   const { behavior } = target.dataset;
-  const filter = document.querySelector('.filter.selected').innerText;
   const li = findListItem(target);
   let { id, title, completed } = li.dataset || {};
 
@@ -28,9 +35,9 @@ document.addEventListener('keydown', event => {
     case ENTER_KEY:
       switch(behavior) {
         case 'create':
-          return send(behavior, { title: target.value, filter });
+          return send(behavior, { title: target.value, filter: activeFilter() });
         case 'update':
-          return send(behavior, { id, completed, title: target.value, filter });
+          return send(behavior, { id, completed, title: target.value, filter: activeFilter() });
       }
       break;
     case ESCAPE_KEY:
@@ -50,7 +57,6 @@ document.addEventListener('dblclick', event => {
 document.addEventListener('click', event => {
   const { target } = event;
   const { behavior } = target.dataset;
-  const filter = document.querySelector('.filter.selected').innerText;
   const li = findListItem(target);
   let { id, title, completed } = li.dataset || {};
 
@@ -62,7 +68,7 @@ document.addEventListener('click', event => {
     case 'toggle':
       event.preventDefault();
       completed = (completed === 'true' ? false : true);
-      return send('update', { id, title, completed, filter });
+      return send('update', { id, title, completed, filter: activeFilter() });
 
     case 'destroy-completed':
       event.preventDefault();
