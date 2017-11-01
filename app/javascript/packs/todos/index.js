@@ -17,12 +17,9 @@ function send(action, params) {
   App.todo.send({ [action]: params });
 }
 
-function activeFilter () {
+function selectedFilter () {
   const element = document.querySelector('.filter.selected');
-  if (element) {
-    return element.dataset.behavior.replace(/^show-/, '');
-  }
-  return 'all';
+  return element ? element.dataset.behavior.replace(/^show-/, '') : 'all';
 }
 
 document.addEventListener('keydown', event => {
@@ -35,9 +32,9 @@ document.addEventListener('keydown', event => {
     case ENTER_KEY:
       switch(behavior) {
         case 'create':
-          return send(behavior, { title: target.value, filter: activeFilter() });
+          return send(behavior, { title: target.value, filter: selectedFilter() });
         case 'update':
-          return send(behavior, { id, completed, title: target.value, filter: activeFilter() });
+          return send(behavior, { id, completed, title: target.value, filter: selectedFilter() });
       }
       break;
     case ESCAPE_KEY:
@@ -68,7 +65,7 @@ document.addEventListener('click', event => {
     case 'toggle':
       event.preventDefault();
       completed = (completed === 'true' ? false : true);
-      return send('update', { id, title, completed, filter: activeFilter() });
+      return send('update', { id, title, completed, filter: selectedFilter() });
 
     case 'destroy-completed':
       event.preventDefault();
