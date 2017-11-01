@@ -1,6 +1,4 @@
 class TodoChannel < ApplicationCable::Channel
-  include CableReady::Broadcaster
-
   def subscribed
     stream_from "TodoChannel"
   end
