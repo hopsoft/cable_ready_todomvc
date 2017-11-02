@@ -24,10 +24,16 @@ class TodosSpa
       template: "/todos/index",
       assigns: { user_id: user_id, filter: filter, todos: Todo.send(filter) }
     )
-    old_body = RenderedPage.find_by(user_id: user_id, name: "todos#index")&.body_fragment
-    new_body = Nokogiri::HTML(html).css("body").first
+    old_body = RenderedPage.find_by(user_id: user_id, name: "todos#index")&.body_element
+    new_body = Nokogiri::HTML(html).at("body")
 
     # TODO: diff the fragments & generate the cable_ready updates
+    changes = []
+    old_body.tdiff(new_body) do |change, node|
+      node = node.parent while node.text? && node.parent
+      changes << [change, node.to_s] if change =~ /\+|\-/
+    end
+    binding.pry
 
     todo_operations.insert_adjacent_html selector: ".todo-list",
       html: todo.render_with(partial: "/todos/todo.html", assigns: { filter: params[:filter] })

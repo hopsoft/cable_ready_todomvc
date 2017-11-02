@@ -17,6 +17,7 @@ gem "jbuilder", "~> 2.5"
 gem "redis", "~> 3.0"
 
 gem "nokogiri", "~> 1.8.1"
+gem "tdiff", "~> 0.3.3"
 gem "cable_ready", "~> 2.0"
 gem "self_renderer", "~> 1.0"
 

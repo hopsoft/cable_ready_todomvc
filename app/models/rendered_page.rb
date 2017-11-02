@@ -25,8 +25,8 @@ class RenderedPage < ApplicationRecord
   # class methods .............................................................
 
   # public instance methods ...................................................
-  def body_fragment
-    Nokogiri::HTML.fragment body
+  def body_element
+    Nokogiri::HTML.fragment(body).at("body")
   end
 
   # protected instance methods ................................................
