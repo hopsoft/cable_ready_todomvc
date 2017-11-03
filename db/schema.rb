@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171101215421) do
-
-  create_table "rendered_pages", force: :cascade do |t|
-    t.string "user_id", null: false
-    t.string "name", null: false
-    t.text "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "name"], name: "index_rendered_pages_on_user_id_and_name", unique: true
-  end
+ActiveRecord::Schema.define(version: 20171028124846) do
 
   create_table "todos", force: :cascade do |t|
     t.string "title", null: false

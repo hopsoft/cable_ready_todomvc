@@ -12,14 +12,16 @@ function findListItem(element) {
   return findListItem(element.parentElement);
 }
 
-function send(action, params) {
-  if (!Array.isArray(params)) params = [params];
-  App.todo.send({ [action]: params });
-}
-
 function selectedFilter () {
   const element = document.querySelector('.filter.selected');
   return element ? element.dataset.behavior.replace(/^show-/, '') : 'all';
+}
+
+function send(operation, filter, params={}) {
+  App.todo.send({
+    operation: { name: operation, params },
+    filter
+  });
 }
 
 document.addEventListener('keydown', event => {
@@ -32,13 +34,13 @@ document.addEventListener('keydown', event => {
     case ENTER_KEY:
       switch(behavior) {
         case 'create':
-          return send(behavior, { title: target.value, filter: selectedFilter() });
+          return send(behavior, selectedFilter(), { title: target.value });
         case 'update':
-          return send(behavior, { id, completed, title: target.value, filter: selectedFilter() });
+          return send(behavior, selectedFilter(), { id, completed, title: target.value });
       }
       break;
     case ESCAPE_KEY:
-      if ('update') return send('show', { id });
+      if ('update') return send('show', selectedFilter(), { id });
       break;
   }
 });
@@ -48,7 +50,7 @@ document.addEventListener('dblclick', event => {
   const { behavior } = target.dataset;
   const li = findListItem(target);
   let { id, title, completed } = li.dataset || {};
-  if (behavior == 'edit') return send(behavior, { id });
+  if (behavior == 'edit') return send(behavior, selectedFilter(), { id });
 });
 
 document.addEventListener('click', event => {
@@ -60,31 +62,31 @@ document.addEventListener('click', event => {
   switch(behavior) {
     case 'toggle-all':
       event.preventDefault();
-      return send('update', { id: 'toggle' });
+      return send('update', selectedFilter(), { id: 'toggle' });
 
     case 'toggle':
       event.preventDefault();
       completed = (completed === 'true' ? false : true);
-      return send('update', { id, title, completed, filter: selectedFilter() });
+      return send('update', selectedFilter(), { id, title, completed });
 
     case 'destroy-completed':
       event.preventDefault();
-      return send('destroy', { id: 'completed' });
+      return send('destroy', selectedFilter(), { id: 'completed' });
 
     case 'destroy':
       event.preventDefault();
-      return send('destroy', { id });
+      return send('destroy', selectedFilter(), { id });
 
     case 'show-all':
       event.preventDefault();
-      return send('index', { filter: 'all' });
+      return send('index', 'all');
 
     case 'show-uncompleted':
       event.preventDefault();
-      return send('index', { filter: 'uncompleted' });
+      return send('index', 'uncompleted');
 
     case 'show-completed':
       event.preventDefault();
-      return send('index', { filter: 'completed' });
+      return send('index', 'completed');
   }
 });

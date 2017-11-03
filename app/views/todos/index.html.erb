@@ -1,15 +1,17 @@
-<section class="todoapp">
-  <header class="header">
-    <h1>todos</h1>
-    <input class="new-todo" placeholder="What needs to be done?" autofocus data-behavior="create">
-  </header>
+<div id="app">
+  <section class="todoapp">
+    <header class="header">
+      <h1>todos</h1>
+      <input class="new-todo" placeholder="What needs to be done?" autofocus data-behavior="create">
+    </header>
 
-  <%= render partial: "/todos/main.html" %>
-  <%= render partial: "/todos/footer.html" %>
-</section>
+    <%= render partial: "/todos/main.html" %>
+    <%= render partial: "/todos/footer.html" %>
+  </section>
 
-<footer class="info">
-  <p>Double-click to edit a todo</p>
-  <p>Created by <a href="https://github.com/hopsoft/todomvc-cableready">Nathan Hopkins</a></p>
-  <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-</footer>
+  <footer class="info">
+    <p>Double-click to edit a todo</p>
+    <p>Created by <a href="https://github.com/hopsoft/todomvc-cableready">Nathan Hopkins</a></p>
+    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+  </footer>
+</div>

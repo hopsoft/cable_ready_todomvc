@@ -1,87 +1,57 @@
 class TodoChannel < ApplicationCable::Channel
+  include CableReady::Broadcaster
+
   def subscribed
     stream_from "TodoChannel"
   end
 
   def receive(data)
-    data.each do |action, params_list|
-      params_list.each do |params|
-        spa = TodosSpa.new(self, user_id, ActionController::Parameters.new(params))
-        send action, spa
-        spa.broadcast
-      end
-    end
+    data      = ActionController::Parameters.new(data)
+    operation = data[:operation][:name]
+    params    = data[:operation][:params] || {}
+    filter    = data[:filter] || "all"
+
+    send operation, params if respond_to?(operation, true)
+
+    cable_ready["TodoChannel"].morph selector: "div#app",
+      html: TodosController.renderer.render(
+        template: "/todos/index",
+        layout: false,
+        assigns: { user_id: user_id, filter: filter, todos: Todo.send(filter) }
+      )
+    cable_ready.broadcast
   end
 
   private
 
-    def create(spa)
-      todo = Todo.new(spa.params.permit(:title))
-      if todo.save
-        spa.todo_created todo
-      end
+    def create(params)
+      Todo.create(params.permit(:title))
     end
 
-    def update(spa)
-      return toggle_all(spa) if spa.params[:id] == "toggle"
-
-      todo = Todo.find(spa.params[:id])
-      if todo.update spa.params.permit(:title, :completed)
-        spa.todo_updated todo
-      end
+    def update(params)
+      return toggle_all if params[:id] == "toggle"
+      todo = Todo.find(params[:id])
+      todo.update params.permit(:title, :completed)
     end
 
-    def toggle_all(spa)
-      if Todo.uncompleted.present?
-        Todo.uncompleted.each do |todo|
-          todo.update completed: true
-          spa.todo_updated todo
-        end
-      else
-        Todo.completed.each do |todo|
-          todo.update completed: false
-          spa.todo_updated todo
-        end
-      end
+    def toggle_all
+      return Todo.uncompleted.update_all completed: true if Todo.uncompleted.present?
+      Todo.completed.update_all completed: false
     end
 
-    def destroy(spa)
-      if spa.params[:id] == "completed"
-        destroy_completed spa
-      else
-        todo = Todo.find(spa.params[:id])
-        todo.destroy
-        spa.todo_destroyed todo
-      end
+    def destroy(params)
+      return Todo.completed.destroy_all if params[:id] == "completed"
+      todo = Todo.find(params[:id])
+      todo.destroy
     end
 
-    def destroy_completed(spa)
-      Todo.completed.each do |todo|
-        todo.destroy
-        spa.todo_destroyed todo
-      end
-    end
+    #def edit(spa)
+      #todo = Todo.find(spa.params[:id])
+      #spa.todo_edited todo
+    #end
 
-    def edit(spa)
-      todo = Todo.find(spa.params[:id])
-      spa.todo_edited todo
-    end
-
-    def show(spa)
-      todo = Todo.find(spa.params[:id])
-      spa.todo_shown todo
-    end
-
-    def index(spa)
-      case spa.params[:filter]
-      when "all"
-        spa.todos_shown Todo.all
-      when "uncompleted"
-        spa.todos_shown Todo.uncompleted
-        spa.todos_hidden Todo.completed
-      when "completed"
-        spa.todos_shown Todo.completed
-        spa.todos_hidden Todo.uncompleted
-      end
-    end
+    #def show(spa)
+      #todo = Todo.find(spa.params[:id])
+      #spa.todo_shown todo
+    #end
 end
