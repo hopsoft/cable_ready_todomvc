@@ -13,11 +13,16 @@ class TodoChannel < ApplicationCable::Channel
 
     send operation, params if respond_to?(operation, true)
 
-    cable_ready["TodoChannel"].morph selector: "div#app",
+    cable_ready["TodoChannel"].morph selector: "section#todoapp",
       html: TodosController.renderer.render(
         template: "/todos/index",
         layout: false,
-        assigns: { user_id: user_id, filter: filter, todos: Todo.send(filter) }
+        assigns: {
+          filter: filter,
+          todos: Todo.send(filter),
+          uncompleted_count: Todo.uncompleted.count,
+          todo_id: operation == "edit" ? params[:id].to_i : nil
+        }
       )
     cable_ready.broadcast
   end
@@ -44,14 +49,4 @@ class TodoChannel < ApplicationCable::Channel
       todo = Todo.find(params[:id])
       todo.destroy
     end
-
-    #def edit(spa)
-      #todo = Todo.find(spa.params[:id])
-      #spa.todo_edited todo
-    #end
-
-    #def show(spa)
-      #todo = Todo.find(spa.params[:id])
-      #spa.todo_shown todo
-    #end
 end

@@ -1,8 +1,6 @@
 import 'todomvc-common/base.css';
 import 'todomvc-app-css/index.css';
 
-CableReady.debug = false;
-
 const ENTER_KEY = 13;
 const ESCAPE_KEY = 27;
 
