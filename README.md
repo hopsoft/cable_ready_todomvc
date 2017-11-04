@@ -11,7 +11,7 @@ A Ruby on Rails implementation of the [TodoMVC application](http://todomvc.com).
 - Works with standard Rails practices & patterns
 - Uses [ActionCable](http://guides.rubyonrails.org/action_cable_overview.html)
   & [CableReady](https://github.com/hopsoft/cable_ready) for lightning fast updates
-- Leverages [morphdom](https://github.com/patrick-steele-idem/morphdom) for DOM diffing that out performs Virtual DOM
+- Leverages [morphdom](https://github.com/patrick-steele-idem/morphdom) for DOM diffing that outperforms Virtual DOM
 - All todo data is persisted to a database on the server
 
 [View a live demo.](http://165.227.16.103)
