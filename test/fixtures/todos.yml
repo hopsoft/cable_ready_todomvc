@@ -3,6 +3,7 @@
 # Table name: todos
 #
 #  id         :integer          not null, primary key
+#  user_id    :string           not null
 #  title      :string           not null
 #  completed  :boolean          default(FALSE), not null
 #  created_at :datetime         not null

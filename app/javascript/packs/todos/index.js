@@ -16,7 +16,7 @@ function selectedFilter () {
 }
 
 function send(operation, filter, params={}) {
-  App.todo.send({
+  App.user.send({
     operation: { name: operation, params },
     filter
   });

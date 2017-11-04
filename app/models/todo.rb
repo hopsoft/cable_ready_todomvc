@@ -3,6 +3,7 @@
 # Table name: todos
 #
 #  id         :integer          not null, primary key
+#  user_id    :string           not null
 #  title      :string           not null
 #  completed  :boolean          default(FALSE), not null
 #  created_at :datetime         not null
@@ -20,6 +21,7 @@ class Todo < ApplicationRecord
   # callbacks .................................................................
 
   # scopes ....................................................................
+  scope :owned_by, -> (user_id) { where user_id: user_id }
   scope :completed, -> { where completed: true }
   scope :uncompleted, -> { where completed: false }
 
