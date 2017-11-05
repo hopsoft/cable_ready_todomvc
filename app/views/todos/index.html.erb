@@ -14,5 +14,5 @@
     </section>
   <% end %>
 
-  <%= render partial: "filters" unless Todo.count.zero? %>
+  <%= render partial: "filters" unless @completed_count.zero? && @uncompleted_count.zero? %>
 </section>
