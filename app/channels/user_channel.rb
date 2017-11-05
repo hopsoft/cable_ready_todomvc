@@ -7,9 +7,10 @@ class UserChannel < ApplicationCable::Channel
 
   def receive(data)
     data      = ActionController::Parameters.new(data)
+    filter    = data[:filter] || "all"
     operation = data[:operation][:name]
     params    = data[:operation][:params] || {}
-    filter    = data[:filter] || "all"
+    edit_id   = params[:id].to_i if operation == "edit"
 
     send operation, params if respond_to?(operation, true)
 
@@ -19,9 +20,10 @@ class UserChannel < ApplicationCable::Channel
         layout: false,
         assigns: {
           filter: filter,
-          todos: Todo.send(filter),
-          uncompleted_count: Todo.uncompleted.count,
-          todo_id: operation == "edit" ? params[:id].to_i : nil
+          todos: Todo.owned_by(user_id).send(filter),
+          completed_count: Todo.owned_by(user_id).completed.count,
+          uncompleted_count: Todo.owned_by(user_id).uncompleted.count,
+          edit_id: edit_id
         }
       )
     cable_ready.broadcast

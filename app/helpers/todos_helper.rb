@@ -6,15 +6,4 @@ module TodosHelper
     css << "hidden"    if todo.completed? && filter == "uncompleted"
     css.uniq.join " "
   end
-
-  def filter_css(key, filter)
-    return "selected" if key == :all && filter.nil?
-    return "selected" if key.to_s == filter
-    nil
-  end
-
-  def count_css
-    return "hidden" if Todo.completed.count.zero?
-    nil
-  end
 end

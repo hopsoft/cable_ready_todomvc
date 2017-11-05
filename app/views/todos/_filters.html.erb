@@ -4,12 +4,12 @@
   </span>
 
   <ul class="filters">
-    <li><%= link_to "All",       "#", class: "filter #{filter_css :all, @filter}",         data: { behavior: "show-all" } %></li>
-    <li><%= link_to "Active",    "#", class: "filter #{filter_css :uncompleted, @filter}", data: { behavior: "show-uncompleted" } %></li>
-    <li><%= link_to "Completed", "#", class: "filter #{filter_css :completed, @filter}",   data: { behavior: "show-completed" } %></li>
+    <li><a class="<%= @filter == "all" ? "selected" : nil %>" data-behavior="show-all">All</a></li>
+    <li><a class="<%= @filter == "uncompleted" ? "selected" : nil %>" data-behavior="show-uncompleted">Active</a></li>
+    <li><a class="<%= @filter == "completed" ? "selected" : nil %>" data-behavior="show-completed">Completed</a></li>
   </ul>
 
-  <% unless Todo.completed.count.zero? %>
+  <% if @completed_count > 0 %>
     <button class="clear-completed" data-behavior="destroy-completed">
       Clear completed
     </button>

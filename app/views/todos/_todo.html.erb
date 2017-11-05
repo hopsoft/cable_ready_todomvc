@@ -1,4 +1,4 @@
-<% if todo.id == @todo_id %>
+<% if todo.id == @edit_id %>
   <%= content_tag :li, id: todo.to_gid_param, class: "editing",
     data: { id: todo.id, title: todo.title, completed: todo.completed? } do %>
     <%= text_field_tag :title, todo.title, autofocus: true, class: "edit", data: { behavior: "update" } %>
