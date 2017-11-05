@@ -1,9 +1,10 @@
 module TodosHelper
-  def todo_css(todo, filter)
-    css = []
-    css << "completed" if todo.completed?
-    css << "hidden"    if todo.uncompleted? && filter == "completed"
-    css << "hidden"    if todo.completed? && filter == "uncompleted"
-    css.uniq.join " "
+  def editing?(todo)
+    todo.id == @edit_id
+  end
+
+  def visible?(todo)
+    return true if @filter == "all"
+    todo.completed? && @filter == "completed" || todo.uncompleted? && @filter == "uncompleted"
   end
 end

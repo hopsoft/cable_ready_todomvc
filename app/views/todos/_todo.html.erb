@@ -1,15 +1,5 @@
-<% if todo.id == @edit_id %>
-  <%= content_tag :li, id: todo.to_gid_param, class: "editing",
-    data: { id: todo.id, title: todo.title, completed: todo.completed? } do %>
-    <%= text_field_tag :title, todo.title, autofocus: true, class: "edit", data: { behavior: "update" } %>
-  <% end %>
+<% if editing? todo %>
+  <%= render partial: "todo_edit", locals: { todo: todo } if visible? todo %>
 <% else %>
-  <%= content_tag :li, id: todo.to_gid_param, class: todo_css(todo, @filter),
-    data: { id: todo.id, title: todo.title, completed: todo.completed? } do %>
-    <div class="view">
-      <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>
-      <%= label_tag :title, todo.title, data: { behavior: "edit" } %>
-      <%= button_tag "", type: "button", class: "destroy", data: { behavior: "destroy" } %>
-    </div>
-  <% end %>
+  <%= render partial: "todo_show", locals: { todo: todo } if visible? todo %>
 <% end %>
