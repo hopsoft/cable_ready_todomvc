@@ -8,9 +8,9 @@ A Ruby on Rails implementation of the [TodoMVC application](http://todomvc.com).
 
 > Welcome to the new world. *-William Thatcher*
 
-- No JavaScript frameworks used
-- All rendering is server-side
-- All data persisted to a server side database
+- No JavaScript frameworks required 😂
+- All rendering is performed server-side
+- All data persisted to a server-side database
 - Works with standard Rails practices & patterns
 - Uses [ActionCable](http://guides.rubyonrails.org/action_cable_overview.html)
   & [CableReady](https://github.com/hopsoft/cable_ready) for lightning fast updates
