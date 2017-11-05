@@ -1,0 +1,17 @@
+<section class="footer">
+  <span class="todo-count">
+    <strong><%= @uncompleted_count %></strong> <%= "item".pluralize(@uncompleted_count) %> left
+  </span>
+
+  <ul class="filters">
+    <li><%= link_to "All",       "#", class: "filter #{filter_css :all, @filter}",         data: { behavior: "show-all" } %></li>
+    <li><%= link_to "Active",    "#", class: "filter #{filter_css :uncompleted, @filter}", data: { behavior: "show-uncompleted" } %></li>
+    <li><%= link_to "Completed", "#", class: "filter #{filter_css :completed, @filter}",   data: { behavior: "show-completed" } %></li>
+  </ul>
+
+  <% unless Todo.completed.count.zero? %>
+    <button class="clear-completed" data-behavior="destroy-completed">
+      Clear completed
+    </button>
+  <% end %>
+<section>
