@@ -201,7 +201,7 @@ DEPENDENCIES
   byebug
   cable_ready (~> 2.0.2)
   capybara (~> 2.13)
-  coffee-rails (~> 4.2)
+  coffee-rails (~> 4.2.2)
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   pry-doc
@@ -209,7 +209,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 3.7)
   rails (~> 5.1.4)
-  redis (~> 3.0)
+  redis (~> 3.3.5)
   sass-rails (~> 5.0)
   selenium-webdriver
   spring

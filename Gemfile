@@ -11,10 +11,10 @@ gem "puma", "~> 3.7"
 gem "sass-rails", "~> 5.0"
 gem "uglifier", ">= 1.3.0"
 gem "webpacker", "~> 3.0"
-gem "coffee-rails", "~> 4.2"
+gem "coffee-rails", "~> 4.2.2"
 gem "turbolinks", "~> 5"
 gem "jbuilder", "~> 2.5"
-gem "redis", "~> 3.0"
+gem "redis", "~> 3.3.5"
 gem "cable_ready", "~> 2.0.2"
 
 group :development, :test do
