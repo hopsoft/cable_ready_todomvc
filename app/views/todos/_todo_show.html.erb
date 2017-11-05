@@ -1,11 +1,13 @@
-<li id="<%= todo.to_gid_param %>"
-    class="<%= todo.completed? ? "completed" : nil %>"
-    data-id="<%= todo.id %>"
-    data-completed="<%= todo.completed? %>"
-    >
-  <div class="view">
-    <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>
-    <%= label_tag :title, todo.title, data: { behavior: "edit" } %>
-    <%= button_tag "", type: "button", class: "destroy", data: { behavior: "destroy" } %>
-  </div>
-</li>
+<% cache todo do %>
+  <li id="<%= todo.to_gid_param %>"
+      class="<%= todo.completed? ? "completed" : nil %>"
+      data-id="<%= todo.id %>"
+      data-completed="<%= todo.completed? %>"
+      >
+    <div class="view">
+      <%= check_box_tag :completed, nil, todo.completed?, class: "toggle", data: { behavior: "toggle" } %>
+      <%= label_tag :title, todo.title, data: { behavior: "edit" } %>
+      <%= button_tag "", type: "button", class: "destroy", data: { behavior: "destroy" } %>
+    </div>
+  </li>
+<% end %>

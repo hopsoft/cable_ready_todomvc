@@ -42,13 +42,18 @@ class UserChannel < ApplicationCable::Channel
     end
 
     def toggle_all
-      return Todo.owned_by(user_id).uncompleted.update_all completed: true if Todo.uncompleted.present?
-      Todo.owned_by(user_id).completed.update_all completed: false
+      if Todo.uncompleted.present?
+        Todo.owned_by(user_id).uncompleted.update_all completed: true , updated_at: Time.current
+      else
+        Todo.owned_by(user_id).completed.update_all completed: false, updated_at: Time.current
+      end
     end
 
     def destroy(params)
-      return Todo.owned_by(user_id).completed.destroy_all if params[:id] == "completed"
-      todo = Todo.owned_by(user_id).find(params[:id])
-      todo.destroy
+      if params[:id] == "completed"
+        Todo.owned_by(user_id).completed.destroy_all
+      else
+        Todo.owned_by(user_id).find(params[:id]).destroy
+      end
     end
 end
