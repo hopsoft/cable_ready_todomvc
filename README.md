@@ -6,6 +6,8 @@
 
 A Ruby on Rails implementation of the [TodoMVC application](http://todomvc.com).
 
+## Server Rendered Single Page App
+
 > Welcome to the new world. *-William Thatcher*
 
 - No JavaScript frameworks required 😂
