@@ -20,6 +20,8 @@ _A more permanent live demo is comming soon._
 [View the code diff](https://github.com/hopsoft/cable_ready_todomvc/compare/112b4ebe0bd86ff029f5d1865eeed71d8f9aacc9...master)
 from a `rails new` setup.
 
+> Welcome to the new world. *-William Thatcher*
+
 ---
 
 <a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/QMSjMHrtPhvfmCnk5Hbikhhr/hopsoft/cable_ready_todomvc'>
