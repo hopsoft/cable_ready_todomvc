@@ -2,7 +2,7 @@ class UserChannel < ApplicationCable::Channel
   include CableReady::Broadcaster
 
   def subscribed
-    stream_from "UserChannel#{params[:room]}"
+    stream_from "UserChannel#{user_id}"
   end
 
   def receive(data)
@@ -14,18 +14,19 @@ class UserChannel < ApplicationCable::Channel
 
     send operation, params if respond_to?(operation, true)
 
-    cable_ready["UserChannel#{user_id}"].morph selector: "section#todoapp",
-      html: TodosController.renderer.render(
-        template: "/todos/index",
-        layout: false,
-        assigns: {
-          filter: filter,
-          todos: Todo.owned_by(user_id).send(filter),
-          completed_count: Todo.owned_by(user_id).completed.count,
-          uncompleted_count: Todo.owned_by(user_id).uncompleted.count,
-          edit_id: edit_id
-        }
-      )
+    html = TodosController.renderer.render(
+      template: "/todos/index",
+      layout: false,
+      assigns: {
+        filter: filter,
+        todos: Todo.owned_by(user_id).send(filter),
+        completed_count: Todo.owned_by(user_id).completed.count,
+        uncompleted_count: Todo.owned_by(user_id).uncompleted.count,
+        edit_id: edit_id
+      }
+    )
+
+    cable_ready["UserChannel#{user_id}"].morph selector: "section#todoapp", html: html
     cable_ready.broadcast
   end
 
