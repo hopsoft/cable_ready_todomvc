@@ -2,9 +2,9 @@
 
 # CableReady TodoMVC
 
-A Ruby on Rails implementation of the [TodoMVC application](http://todomvc.com).
+## A Server Rendered Single Page App
 
-## Server Rendered Single Page App
+An implementation of the [TodoMVC application](http://todomvc.com) created with [Ruby on Rails](http://rubyonrails.org).
 
 - One way data flow similar to React
 - Perform all rendering server-side with familiar Rails views
