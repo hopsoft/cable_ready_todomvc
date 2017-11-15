@@ -1,6 +1,6 @@
 [![Lines of Code](http://img.shields.io/badge/lines_of_code-278-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
 
-# CableReady TodoMVC
+# [CableReady](https://github.com/hopsoft/cable_ready) TodoMVC
 
 ## A Server Rendered Single Page App
 
