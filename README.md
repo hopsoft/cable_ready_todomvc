@@ -24,6 +24,4 @@ from a `rails new` setup.
 
 ---
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/QMSjMHrtPhvfmCnk5Hbikhhr/hopsoft/cable_ready_todomvc'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/QMSjMHrtPhvfmCnk5Hbikhhr/hopsoft/cable_ready_todomvc.svg' />
-</a>
+
